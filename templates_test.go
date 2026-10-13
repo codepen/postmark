@@ -1,7 +1,9 @@
 package postmark
 
 import (
+	"encoding/json"
 	"net/http"
+	"strings"
 	"testing"
 
 	"goji.io/pat"
@@ -299,4 +301,23 @@ func TestSendTemplatedBatch(t *testing.T) {
 		t.Fatalf("SendTemplatedBatch: wrong response array size!")
 	}
 
+}
+
+func TestTemplatedEmailMessageStream(t *testing.T) {
+	withStream, err := json.Marshal(TemplatedEmail{TemplateAlias: "a", MessageStream: "broadcast"})
+	if err != nil {
+		t.Fatalf("Marshal: %s", err.Error())
+	}
+	if !strings.Contains(string(withStream), `"MessageStream":"broadcast"`) {
+		t.Fatalf("MessageStream missing from payload: %s", withStream)
+	}
+
+	// Left out when empty, so Postmark uses the default stream.
+	withoutStream, err := json.Marshal(TemplatedEmail{TemplateAlias: "a"})
+	if err != nil {
+		t.Fatalf("Marshal: %s", err.Error())
+	}
+	if strings.Contains(string(withoutStream), "MessageStream") {
+		t.Fatalf("empty MessageStream should be omitted: %s", withoutStream)
+	}
 }

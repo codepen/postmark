@@ -197,6 +197,8 @@ type TemplatedEmail struct {
 	TrackOpens bool `json:",omitempty"`
 	// Attachments: List of attachments
 	Attachments []Attachment `json:",omitempty"`
+	// MessageStream: The ID of the message stream to send through. Defaults to the server's default transactional stream ("outbound") when empty.
+	MessageStream string `json:",omitempty"`
 }
 
 // SendTemplatedEmail sends an email using a template (TemplateId)
